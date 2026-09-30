@@ -14,11 +14,13 @@ concurrency:
   cancel-in-progress: false
 jobs:
   generate:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7.0.0
         with:
           python-version: '3.12'
       - run: python scripts/resolve_source.py
@@ -27,7 +29,7 @@ jobs:
       - run: python -m unittest discover -s tests -v
       - name: Record candidate diff
         run: git diff --stat >> "$GITHUB_STEP_SUMMARY"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7.0.1
         with:
           name: verified-holidays
           retention-days: 1
@@ -38,21 +40,21 @@ jobs:
   publish:
     if: github.event_name != 'pull_request'
     needs: generate
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.0.0
         with:
           node-version: '22'
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7.0.0
         with:
           python-version: '3.12'
       - run: npm ci
       - run: rm -rf public
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8.0.1
         with:
           name: verified-holidays
       - run: python scripts/holiday_data.py validate
