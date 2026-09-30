@@ -1,0 +1,8 @@
+node_modules/
+.wrangler/
+.venv/
+__pycache__/
+.DS_Store
+.env*
+candidate/
+.dev.vars*

@@ -1,0 +1,7 @@
+/v1/manifest.json
+  Cache-Control: public, max-age=300, must-revalidate
+/v1/countries/*
+  Cache-Control: public, max-age=31536000, immutable
+/*
+  Access-Control-Allow-Origin: *
+  X-Content-Type-Options: nosniff
