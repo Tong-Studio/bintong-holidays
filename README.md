@@ -43,10 +43,14 @@ The publish job verifies the candidate, deploys static assets, checks HTTPS byte
 and cache headers, and rolls back to the previous 100% version if validation fails.
 The initial service must be provisioned manually with a validated snapshot first.
 
-Configure repository variable `CLOUDFLARE_ACCOUNT_ID` and secret
-`CLOUDFLARE_API_TOKEN` with permissions limited to the account's Workers deploys
-and the tong-studio.com zone needed for the custom domain. Never put tokens in
-source or the app. Deployment is via this workflow only; do not enable a second
+Configure repository variable `CLOUDFLARE_ACCOUNT_ID` and a **production environment**
+secret `CLOUDFLARE_API_TOKEN`. Restrict that environment to the `main` branch. The
+account-owned Cloudflare token needs **Individual Workers Editor** for
+**bintong-holidays** only. Versions are uploaded and deployed without changing
+existing domains/routes; no account-wide Workers or zone permissions are needed.
+Never put tokens in source or the app. The publish job has read-only GitHub access;
+a separate job records public data without the Cloudflare secret. Deployment is
+via this workflow only; do not enable a second
 Cloudflare Git build trigger. Standard public GitHub runners and static assets
 avoid request-based application compute billing. No paid storage/database is used.
 
@@ -54,9 +58,16 @@ Inspect failed GitHub Actions runs; enable GitHub's workflow failure notificatio
 `status.json` records each successful check even if data is unchanged, maintaining
 repository activity. GitHub can disable public schedules after 60 inactive days;
 if that happens, re-enable the workflow and run it manually. Schedules may be late.
-For manual recovery, use `npx wrangler rollback <version-id> --yes`, then revert
+To check a rotated token, manually run the workflow with `force_deploy: true`.
+For manual recovery, use `npx --no-install wrangler versions deploy <version-id>@100 --yes`, then revert
 the bad generator/override change and re-run the workflow. Do not modify the
 existing tong-studio website service.
+
+## Security
+
+See [SECURITY.md](SECURITY.md) for access boundaries, branch protections,
+dependency updates, credential rotation and private vulnerability reports.
+The repository and holiday data remain intentionally public.
 
 ## Licenses
 
