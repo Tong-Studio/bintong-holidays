@@ -1,4 +1,4 @@
 holidays==0.107
 Babel==2.18.0
-python-dateutil==2.9.0.post0
+python-dateutil==3.0.0
 six==1.17.0
